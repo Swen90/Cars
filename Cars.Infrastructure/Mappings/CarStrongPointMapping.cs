@@ -5,7 +5,7 @@ namespace Cars.Infrastructure.Mappings
 {
     public static class CarStrongPointMapping
     {
-        public static CarStrongPointReadDto ToCarStrongPointDto(this CarStrongPoint carStrongPoint)
+        public static CarStrongPointReadDto ToCarStrongPointReadDto(this CarStrongPoint carStrongPoint)
         {
             CarStrongPointReadDto carStrongPointDto = new CarStrongPointReadDto()
             {

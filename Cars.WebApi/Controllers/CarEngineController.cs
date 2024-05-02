@@ -44,9 +44,16 @@ namespace Cars.WebApi.Controllers
         public ActionResult Create([FromBody] CarEngineWriteDto carEngineWriteDto)
         {
             if (carEngineWriteDto == null)
-                return BadRequest("У машины не найдены сильные стороны");
+                return BadRequest("Не выбран двигатель для добавления");
 
             return Ok(_carEngineService.CreateByCarId(carEngineWriteDto));
+        }
+
+        [HttpDelete]
+        public ActionResult Delete(CarEngineWriteDto carenginewritedto)
+        {
+            _carEngineService.DeleteById(carenginewritedto);
+            return Ok("Удаление успешно");
         }
     }
 }

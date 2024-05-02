@@ -16,7 +16,7 @@ namespace Cars.Infrastructure.Services
             _db = db;
         }
 
-        private CarStrongPoint? GetById(int id)
+        private CarStrongPointReadDto? GetFullById(int id) ///Comment: Получаем запись со связанными таблицами для вывода в методе контроллера Get 
         {
             CarStrongPoint? carStrongPoint = _db.CarStrongPoints.
                 Where(c => c.Id == id).
@@ -25,6 +25,15 @@ namespace Cars.Infrastructure.Services
                 Include(c => c.StrongPoint).
                 FirstOrDefault();
 
+            if (carStrongPoint == null)
+                return null;
+
+            return carStrongPoint.ToCarStrongPointReadDto();
+        }
+
+        private CarStrongPoint? GetById(int id) ///Comment: Получаем простую запись из 1 таблицы, чтобы удалить, не подтягивая лишние связи
+        {
+            CarStrongPoint? carStrongPoint = _db.CarStrongPoints.Where(i => i.Id == id).FirstOrDefault();
             if (carStrongPoint == null)
                 return null;
 
@@ -49,11 +58,11 @@ namespace Cars.Infrastructure.Services
         ///Comment: Написать метод GetCarStrongPointByCarId по новой созданной записи CarStrongPoint
         public CarStrongPointReadDto? GetDtoById(int id)
         {
-            var carStrongPoint = GetById(id);
+            var carStrongPoint = GetFullById(id);
             if (carStrongPoint == null)
                 return null;
 
-            return carStrongPoint.ToCarStrongPointDto();
+            return carStrongPoint;
         }
 
         public int CreateById(CarStrongPointWriteDto carStrongPointDto)

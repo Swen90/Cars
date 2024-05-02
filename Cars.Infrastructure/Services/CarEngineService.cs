@@ -34,11 +34,20 @@ namespace Cars.Infrastructure.Services
             return listEngineDtos.ToListEngineDtos();
         }
 
+        private CarEngine? GetById(int id)
+        {
+            CarEngine? engine = _db.CarEngines.Where(i => i.Id == id).FirstOrDefault();
+            if (engine == null)
+                return null;
+
+            return engine;
+        }
+
         public List<Guid> CreateByCarId(CarEngineWriteDto carEngineDto)
         {
             List<Guid> list = new List<Guid>();
             ///Comment: Локально заполнить для добавления CarEngineWriteDto
-            foreach (var engineWriteDto in carEngineDto.EngineId) /// null
+            foreach (Guid engineWriteDto in carEngineDto.EngineId) /// null
             {
                 ///Comment: Получение Engine, проверить на существование в бд в записи
                 bool result = isExistsEngineById(engineWriteDto);
@@ -57,10 +66,34 @@ namespace Cars.Infrastructure.Services
             return list;
         }
 
-        private bool isExistsEngineById(Guid id)
+        private List<CarEngine> GetByCarId(CarEngineWriteDto dtos)
+        {
+            List<CarEngine> carEngine = _db.CarEngines.Where(i => i.CarId == dtos.CarId).Include(c => c.Car).Include(r => r.Engine).ToList();
+            if (carEngine == null)
+                return new List<CarEngine>();
+
+            return carEngine;
+        }
+
+        public bool DeleteById(CarEngineWriteDto carEngineDtos)
+        {
+            List<CarEngine> deletedEntries = GetByCarId(carEngineDtos);
+
+            foreach (CarEngine carEngine in deletedEntries)
+            {
+                if(carEngine == null)
+                    return false;
+
+                _db.CarEngines.Remove(carEngine);
+                _db.SaveChanges();
+            }
+            return true;
+        }
+
+        private bool isExistsEngineById(Guid id) ///Comment: сделать проверку на существование в БД связи и проверку на дубликаты
         {
             Engine? engine = _db.Engines.Where(e => e.Id == id).FirstOrDefault();
-            if (engine == null) 
+            if (engine == null)     
                 return false;
 
             return true;

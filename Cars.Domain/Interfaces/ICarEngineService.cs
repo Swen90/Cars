@@ -7,5 +7,7 @@ namespace Cars.Domain.Interfaces
         public List<EngineReadDto>? GetAllByCarId(Guid carId);
 
         public List<Guid> CreateByCarId(CarEngineWriteDto carEngineDto);
+
+        public bool DeleteById(CarEngineWriteDto carEngineDtos);
     }
 }
